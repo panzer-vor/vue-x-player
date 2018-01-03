@@ -1,15 +1,19 @@
 {
   "name": "vue-x-player",
   "description": "A Vue.js project",
-  "version": "1.0.0",
-  "author": "xyk0279 <xyk0279@qq.com>",
+  "version": "1.1.2",
+  "author": "xyk0279",
   "license": "MIT",
   "private": false,
   "main": "dist/vue-x-player.js",
   "repository": {
     "type":"git",
-    "url":"https://"
+    "url":"https://github.com/xyk0279/vue-x-player"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"

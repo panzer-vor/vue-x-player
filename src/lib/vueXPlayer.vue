@@ -1,91 +1,102 @@
 <template>
   <div id="wrapper">
     <audio autoplay loop controls :src="url" ref="player" id="player"></audio>
-    <div class="audioplayer" ref="playerWra" :style="{backgroundColor:bgColor,width:small?'2.5em':'100%'}" @mouseenter="small=false" @mouseleave="small=true">
+    <div class="audioplayer"
+         ref="playerWra"
+         :style="{backgroundColor:bgColor,width:long?'100%':'2.5em'}"
+         @mouseenter="small?long=true:null"
+         @mouseleave="small?long=false:null">
       <div class="audioplayer-playpause" title="Play" @click="changePlayState">
         <a href="#">Play</a>
       </div>
       <transition name="fade">
-        <div class="audioplayer-time audioplayer-time-current" v-show="!small">{{getPlayTime(current)}}</div>
+        <div class="audioplayer-time audioplayer-time-current" v-show="long">{{getPlayTime(current)}}</div>
       </transition>
       <transition name="fade">
-        <div class="audioplayer-bar" ref="bar" v-show="!small">
+        <div class="audioplayer-bar" ref="bar" v-show="long">
           <!--<div class="audioplayer-bar-loaded" style="width: 22.2419%;"></div>&lt;!&ndash;加载进度&ndash;&gt;-->
           <div class="audioplayer-bar-played" :style="{width: current/duration*100+'%'}"></div> <!--播放进度-->
           <input type="range" v-model="range" step="0.1" @input="kk" ref="ranges" @mousedown="move=true">
         </div>
       </transition>
       <transition name="fade">
-        <div class="audioplayer-time audioplayer-time-duration" v-show="!small">{{getPlayTime(duration)}}</div>
+        <div class="audioplayer-time audioplayer-time-duration" v-show="long">{{getPlayTime(duration)}}</div>
       </transition>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  props:['url','bgColor','small'],
-  data(){
-    return{
-      duration:0,
-      current:0,
-      move:false,
-      range:0,
-    }
-  },
-  mounted(){
-    var player = this.$refs.player, bar = this.$refs.bar
-    this.w = this.$refs.bar.offsetWidth
-    this.listenStart(player)
-    document.body.addEventListener('mouseup',()=>{
-      if(this.move){
-        this.move=false
-        player.currentTime = this.duration*this.range/100
-      }
-    })
-  },
-  methods:{
-    addClass(ele, cls) {
-        ele.className += ' ' + cls;
-    },
-    removeClass(ele, cls) {
-        var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');ele.className = ele.className.replace(reg, ' ');
-    },
-    changePlayState(){
-      if(this.duration){
-        if(this.$refs.player.paused){
-          this.$refs.player.play()
-          this.addClass(this.$refs.playerWra,'audioplayer-playing')
-        }else {
-          this.$refs.player.pause()
-          this.removeClass(this.$refs.playerWra,'audioplayer-playing')
-        }
+  export default {
+    props:['url','bgColor','small'],
+    data(){
+      return{
+        duration:0,
+        current:0,
+        move:false,
+        range:0,
+        long:true,
       }
     },
-    kk(){
-      this.current = this.duration/100*this.range
+    created(){
+      if(this.small){
+        this.long=false
+      }
     },
-    listenStart(el){
-      el.addEventListener('timeupdate', ()=>{
-        if(this.duration&&!this.move){
-          this.current = el.currentTime
-          this.range = this.current/this.duration*100
-        }else {
-          this.isOn = true
-          this.addClass(this.$refs.playerWra,'audioplayer-playing')
-          this.duration = el.duration
+    mounted(){
+
+      var player = this.$refs.player, bar = this.$refs.bar
+      this.w = this.$refs.bar.offsetWidth
+      this.listenStart(player)
+      document.body.addEventListener('mouseup',()=>{
+        if(this.move){
+          this.move=false
+          player.currentTime = this.duration*this.range/100
         }
       })
     },
-    getPlayTime(val){
-      var tM = ~~(val / 60)
-      var tS = Math.floor(val % 60)
-      tS<10?tS=`0${tS}`:tS
-      val = tM+':'+tS
-      return val
+    methods:{
+      addClass(ele, cls) {
+        ele.className += ' ' + cls;
+      },
+      removeClass(ele, cls) {
+        var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');ele.className = ele.className.replace(reg, ' ');
+      },
+      changePlayState(){
+        if(this.duration){
+          if(this.$refs.player.paused){
+            this.$refs.player.play()
+            this.addClass(this.$refs.playerWra,'audioplayer-playing')
+          }else {
+            this.$refs.player.pause()
+            this.removeClass(this.$refs.playerWra,'audioplayer-playing')
+          }
+        }
+      },
+      kk(){
+        this.current = this.duration/100*this.range
+      },
+      listenStart(el){
+        el.addEventListener('timeupdate', ()=>{
+          if(this.duration&&!this.move){
+            this.current = el.currentTime
+            this.range = this.current/this.duration*100
+          }else {
+            this.isOn = true
+            this.addClass(this.$refs.playerWra,'audioplayer-playing')
+            this.duration = el.duration
+          }
+        })
+      },
+      getPlayTime(val){
+        var tM = ~~(val / 60)
+        var tS = Math.floor(val % 60)
+        tS<10?tS=`0${tS}`:tS
+        val = tM+':'+tS
+        return val
+      },
     },
-  },
-}
+  }
 </script>
 
 <style scoped>
