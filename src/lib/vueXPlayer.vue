@@ -35,19 +35,23 @@ export default {
       current: 0,
       move: false,
       range: 0,
-      long: true
+      long: true,
+      openCon: false,
     };
   },
   created() {
     if (this.small) {
       this.long = false;
     }
+    this.openCon = this.open
   },
   mounted() {
     var player = this.$refs.player,
       bar = this.$refs.bar;
     this.w = this.$refs.bar.offsetWidth;
-    this.listenStart(player);
+    if(this.open){
+      this.listenStart(player);
+    }
     document.body.addEventListener("mouseup", () => {
       if (this.move) {
         this.move = false;
@@ -64,7 +68,11 @@ export default {
       ele.className = ele.className.replace(reg, " ");
     },
     changePlayState() {
-      if (this.duration) {
+      if(!this.openCon){
+        this.listenStart(this.$refs.player);
+        this.openCon = true;
+      }
+      
         if (this.$refs.player.paused) {
           this.$refs.player.play();
           this.addClass(this.$refs.playerWra, "audioplayer-playing");
@@ -72,7 +80,7 @@ export default {
           this.$refs.player.pause();
           this.removeClass(this.$refs.playerWra, "audioplayer-playing");
         }
-      }
+    
     },
     kk() {
       this.current = this.duration / 100 * this.range;
@@ -84,7 +92,10 @@ export default {
           this.range = this.current / this.duration * 100;
         } else {
           this.isOn = true;
-          this.addClass(this.$refs.playerWra, "audioplayer-playing");
+          if(this.open){
+this.addClass(this.$refs.playerWra, "audioplayer-playing");
+          }
+    
           this.duration = el.duration;
         }
       });
