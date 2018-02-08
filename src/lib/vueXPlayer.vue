@@ -1,6 +1,6 @@
 <template>
   <div id="wrapper">
-    <audio autoplay loop controls :src="url" ref="player" id="player"></audio>
+    <audio :autoplay='open?"autoplay":false' loop controls :src="url" ref="player" id="player"></audio>
     <div class="audioplayer"
          ref="playerWra"
          :style="{backgroundColor:bgColor,width:long?'100%':'2.5em'}"
@@ -47,9 +47,7 @@ export default {
     var player = this.$refs.player,
       bar = this.$refs.bar;
     this.w = this.$refs.bar.offsetWidth;
-    if(open){
-      this.listenStart(player);
-    }
+    this.listenStart(player);
     document.body.addEventListener("mouseup", () => {
       if (this.move) {
         this.move = false;
